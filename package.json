@@ -1,0 +1,18 @@
+{
+  "name": "basebot",
+  "version": "1.0.0",
+  "description": "A template for deploying telegram bots to gcp",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Obal",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "request": "^2.88.2",
+    "telegrambot": "file:./localModules/telegramBot"
+  }
+}
