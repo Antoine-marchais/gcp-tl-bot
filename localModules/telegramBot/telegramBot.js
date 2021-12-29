@@ -26,12 +26,22 @@ const parseCommand = function(message){
 }
 
 // bot to process telegram message according to a list of predefined commands
-function Bot(token,route){
-    this.route = route;
+function Bot(token){
     this.token = token;
     this.commands = [];
+    this.externalCommands = {};
     const _this = this
     this.defaultCommand = function(message){}
+
+    // add a single entry point for external triggers and telegram updates
+    this.entryPoint = function(req, res){
+        if (req.url.split("/")[1] == "external") {
+            _this.triggerExternal(req, res)
+        }
+        else {
+            _this.processMessage(req, res)
+        }
+    }
 
     // find commands in the message and execute them
     this.processMessage = function(req,res){
@@ -44,7 +54,7 @@ function Bot(token,route){
                 for (let j = 0; j < parsedCommands.length; j += 1){
                     cmd = parsedCommands[j]
                     for(let i = 0; i < _this.commands.length; i += 1){
-                        if (_this.commands[i].cmd == cmd){
+                        if ("/" + _this.commands[i].cmd == cmd.toLowerCase()){
                             cmdExists = true;
                             _this.commands[i].callback(message);
                         }
@@ -59,14 +69,33 @@ function Bot(token,route){
         res.send('ok');
     }
 
+    // trigger one of the external commands
+    this.triggerExternal = function(req, res){
+        const splitPath = req.url.toLowerCase().split("/")
+        const cmd = splitPath[splitPath.length - 1]
+        const params = req.body
+        if (cmd in _this.externalCommands) {
+            _this.externalCommands[cmd](params)
+            res.status(200);
+            res.send('ok');
+        } else {
+            res.status(404);
+            res.send('external command not found')
+        }
+    }
+
     // append a command and its callback to the list of processed commands
     this.addCommand = function(cmd,callback){
-        this.commands.push(new Command(cmd,callback));
+        this.commands.push(new Command(cmd.toLowerCase(),callback));
     }
 
     // create a default command for bot api
     this.setDefault = function(callback){
         this.defaultCommand = callback;
+    }
+
+    this.addExternalCommand = function(cmd, callback){
+        this.externalCommands[cmd.toLowerCase()] = callback
     }
 
     // send a message to the given chat
@@ -85,7 +114,7 @@ function Bot(token,route){
     }
 }
 
-exports.createBot = function(token,route){
-    return new Bot(token,route);
+exports.createBot = function(token){
+    return new Bot(token);
 }
 

@@ -1,6 +1,15 @@
 # Template for a GCP Telegram Bot
 
-This template allows an easy deployment of a telegram bot hosted on GCP cloud functions, receiving updates from Telegram by webhook
+This template allows an easy deployment of a telegram bot written in nodeJS,
+hosted on GCP cloud functions, and receiving updates from Telegram by webhook
+
+## Development
+
+Bot commands should be implemented as callback functions in the `main.js` file.
+There are two types of commands:
+- updates commands, declared with the `addCommand` method. These commands process a telegram message object when it is received.
+For more informations about the message format, check out the [Telegram API Documentation](https://core.telegram.org/bots/api#message)
+- external commands, declared with the `addExternalCommand` these commands will be exposed on your bot cloud function, on the `/external/<cmd-name` endpoint.
 
 ## Deployment
 

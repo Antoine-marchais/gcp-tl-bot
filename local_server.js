@@ -7,10 +7,10 @@ const app = express()
 app.use(bodyParser.json())
 const port = 8080
 
-app.post("/", (req, res) => {
+app.post("/*", (req, res) => {
     const requestDate = new Date()
     console.log(`[${requestDate.toISOString()}] request: ${req.method} ${req.url}`)
-    mainModule.processMessage(req, res)
+    mainModule.entryPoint(req, res)
 })
 
 app.listen(port, () => {

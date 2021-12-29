@@ -21,7 +21,7 @@ jobs:
           gcloud auth activate-service-account --key-file=key_file.json
           gcloud config set project $GCP_PROJECT
           gcloud functions deploy $BOT_NAME \
-            --entry-point=processMessage \
+            --entry-point=entryPoint \
             --runtime=nodejs14 \
             --trigger-http \
             --allow-unauthenticated \
